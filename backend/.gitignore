@@ -1,0 +1,40 @@
+# Visual Studio files
+.vs/
+.vscode/
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+*.dll
+*.exe
+
+# Visual Studio Code files
+.vscode/
+
+# Node.js dependencies
+node_modules/
+
+# Package files
+*.nupkg
+*.pfx
+*.snk
+*.userprefs
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# IDE-specific files
+*.idea/
+*.suo
+*.user
+*.sln.docstates
+
+# Other generated files
+Thumbs.db
+ClientApp/dist/
