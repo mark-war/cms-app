@@ -35,11 +35,34 @@ BEGIN
 END
 GO
 
--- Insert sample data
-INSERT INTO Customers (FirstName, LastName, Email, Phone, Address) VALUES
-('Kobe', 'Bryant', 'kbryant@lakers.com', '123-456-7890', '824 Los Angeles California'),
-('Michael', 'Jordan', 'mjordan@bulls.com', '456-789-0123', '2345 Illinois Chicago'),
-('Earvin', 'Johnson', 'mjohnson@lakers.com', '789-012-3456', '789 Los Angeles California'),
-('Stephen', 'Curry', 'scurry@warriors.com', '012-345-6789', '456 Golden State Bay Area'),
-('Penny', 'Hardaway', 'phardaway@magic.com', '234-567-8901', '890 Orlando Colorado');
-GO
+-- Insert sample data if it doesn't already exist
+INSERT INTO Customers (FirstName, LastName, Email, Phone, Address) 
+SELECT 'Kobe', 'Bryant', 'kbryant@lakers.com', '123-456-7890', '824 Los Angeles California'
+WHERE NOT EXISTS (
+    SELECT 1 FROM Customers WHERE Email = 'kbryant@lakers.com'
+);
+
+INSERT INTO Customers (FirstName, LastName, Email, Phone, Address) 
+SELECT 'Michael', 'Jordan', 'mjordan@bulls.com', '456-789-0123', '2345 Illinois Chicago'
+WHERE NOT EXISTS (
+    SELECT 1 FROM Customers WHERE Email = 'mjordan@bulls.com'
+);
+
+INSERT INTO Customers (FirstName, LastName, Email, Phone, Address) 
+SELECT 'Earvin', 'Johnson', 'mjohnson@lakers.com', '789-012-3456', '789 Los Angeles California'
+WHERE NOT EXISTS (
+    SELECT 1 FROM Customers WHERE Email = 'mjohnson@lakers.com'
+);
+
+INSERT INTO Customers (FirstName, LastName, Email, Phone, Address) 
+SELECT 'Stephen', 'Curry', 'scurry@warriors.com', '012-345-6789', '456 Golden State Bay Area'
+WHERE NOT EXISTS (
+    SELECT 1 FROM Customers WHERE Email = 'scurry@warriors.com'
+);
+
+INSERT INTO Customers (FirstName, LastName, Email, Phone, Address) 
+SELECT 'Penny', 'Hardaway', 'phardaway@magic.com', '234-567-8901', '890 Orlando Colorado'
+WHERE NOT EXISTS (
+    SELECT 1 FROM Customers WHERE Email = 'phardaway@magic.com'
+);
+
