@@ -72,7 +72,6 @@ export default {
 
             // Ensure that errors is not undefined or null
             if (errors) {
-              // Flatten the nested arrays and concatenate error messages
               Object.keys(errors).forEach((fieldName) => {
                 errors[fieldName].forEach((errorMessage) => {
                   flattenedErrors.push(errorMessage);

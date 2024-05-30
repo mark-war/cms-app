@@ -178,7 +178,7 @@ td.action-btn {
 .create-customer-btn {
   position: fixed;
   right: 20px;
-  bottom: 20px; /* Adjust positioning as needed */
+  bottom: 20px;
   width: 50px;
   height: 50px;
   background-color: #35495e;
@@ -191,20 +191,20 @@ td.action-btn {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px; /* Adjust font size as needed */
+  font-size: 24px;
 }
 
 .create-customer-btn:hover::before {
   content: "Add New Customer";
   position: absolute;
-  top: -30px; /* Adjust positioning as needed */
-  left: 50%; /* Adjust positioning as needed */
+  top: -30px;
+  left: 50%;
   transform: translateX(-50%);
   background-color: #fff;
   color: #35495e;
   padding: 5px 10px;
   border-radius: 5px;
-  font-size: 14px; /* Adjust font size as needed */
+  font-size: 14px;
   opacity: 0; /* Initially hidden */
   transition: opacity 0.3s;
 }
@@ -234,10 +234,6 @@ td.action-btn {
     margin: 2px 0;
     width: 100%;
   }
-
-  /* .create-customer-btn {
-    padding: 8px 16px;
-  } */
 }
 
 .pagination {

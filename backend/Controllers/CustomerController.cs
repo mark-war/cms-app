@@ -1,20 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
-
 using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
 
 namespace backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize] // Add this line to secure all actions in this controller
+    [Authorize]
     public class CustomerController : ControllerBase
     {
         private readonly CMSDBContext _DBContext;

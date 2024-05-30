@@ -20,7 +20,7 @@ const router = createRouter({
 
 const app = createApp(App);
 app.use(VueToastify, {
-    position: 'top-right', // Set the position to top-right
+    position: 'top-right',
     duration: 3000, // Set the duration of the toast
     theme: "dark" // You can choose between "light", "dark", or "colored"
   });
