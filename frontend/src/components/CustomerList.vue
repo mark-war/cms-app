@@ -1,78 +1,124 @@
 <template>
   <div class="customer-list">
-    <router-link to="/create-customer" class="create-customer-btn"
-      >Create Customer</router-link
-    >
-
     <table>
       <thead>
         <tr>
           <th>Name</th>
           <th>Email</th>
-          <th>Actions</th>
+          <th class="action-col">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="customer in customers" :key="customer.customerId">
+        <tr v-for="customer in paginatedCustomers" :key="customer.customerId">
           <td>{{ customer.firstName }} {{ customer.lastName }}</td>
           <td>{{ customer.email }}</td>
-          <td>
+          <td class="action-btn">
             <button
               class="customer-view"
               @click="viewCustomer(customer.customerId)"
             >
-              View
+              Details
             </button>
             <button
               class="customer-del"
               @click="deleteCustomer(customer.customerId)"
             >
-              X
+              Delete
             </button>
           </td>
         </tr>
       </tbody>
     </table>
+    <div class="pagination">
+      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">
+        Next
+      </button>
+    </div>
+    <router-link to="/create-customer" class="create-customer-btn"
+      >+</router-link
+    >
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import { useToast } from "vue-toastify";
+import { checkTokenExpiration, getToken } from "../../utils/auth";
 
 export default {
   data() {
     return {
       customers: [],
+      currentPage: 1,
+      customersPerPage: 10, // Number of customers to show per page
     };
   },
   mounted() {
+    checkTokenExpiration(); // Check token expiration on component mount
     this.fetchCustomers();
   },
   methods: {
     fetchCustomers() {
+      const toast = useToast();
+      const token = getToken();
       axios
-        .get("https://localhost:5001/Customer/GetAll")
+        .get("https://localhost:5001/Customer/GetAll", {
+          headers: { Authorization: "Bearer " + token },
+        })
         .then((response) => {
           this.customers = response.data;
         })
         .catch((error) => {
           console.error("Error fetching customers:", error);
+          toast.error("Failed to fetch customers. Please try again.");
         });
     },
     viewCustomer(id) {
-      this.$router.push({ path: `/customer/${id}` });
+      const token = getToken();
+      this.$router.push({ path: `/customer/${id}`, query: { token } });
     },
     deleteCustomer(id) {
+      const toast = useToast();
+      const token = getToken();
       axios
-        .delete(`https://localhost:5001/Customer/Remove/${id}`)
+        .delete(`https://localhost:5001/Customer/Remove/${id}`, {
+          headers: { Authorization: "Bearer " + token },
+        })
         .then(() => {
-          alert("Customer deleted successfully!");
+          toast.success("Customer deleted successfully!");
           this.fetchCustomers(); // Refresh the list after deletion
         })
         .catch((error) => {
           console.error("Error deleting customer:", error);
-          alert("Failed to delete customer. Please try again.");
+          toast.error("Failed to delete customer. Please try again.");
         });
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    setPage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
+    },
+  },
+  computed: {
+    paginatedCustomers() {
+      const start = (this.currentPage - 1) * this.customersPerPage;
+      const end = start + this.customersPerPage;
+      return this.customers.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.customers.length / this.customersPerPage);
     },
   },
 };
@@ -102,15 +148,20 @@ th {
   background-color: #f2f2f2;
 }
 
+th.action-col,
+td.action-btn {
+  width: 120px;
+}
+
 .customer-view {
-  background: blue;
+  background: rgb(126, 126, 224);
   border-radius: 5px;
   margin-right: 5px;
 }
 
 .customer-del {
-  background: red;
-  border-radius: 50%;
+  background: rgb(241, 92, 92);
+  border-radius: 5px;
   margin-left: 5px;
 }
 
@@ -124,28 +175,102 @@ th {
 
 .customer-view:hover {
   background-color: #fff;
-  color: blue;
+  color: rgb(126, 126, 224);
 }
 .customer-del:hover {
   background-color: #fff;
-  color: red;
+  color: rgb(241, 92, 92);
 }
 
 .create-customer-btn {
   position: fixed;
   right: 20px;
-  padding: 10px 20px;
+  bottom: 20px; /* Adjust positioning as needed */
+  width: 50px;
+  height: 50px;
   background-color: #35495e;
   color: #fff;
   text-decoration: none;
   border: none;
-  border-radius: 5px;
+  border-radius: 50%; /* Make it a circle */
   cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px; /* Adjust font size as needed */
+}
+
+.create-customer-btn:hover::before {
+  content: "Add New Customer";
+  position: absolute;
+  top: -30px; /* Adjust positioning as needed */
+  left: 50%; /* Adjust positioning as needed */
+  transform: translateX(-50%);
+  background-color: #fff;
+  color: #35495e;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px; /* Adjust font size as needed */
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s;
+}
+
+.create-customer-btn:hover::before {
+  opacity: 1; /* Show on hover */
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .customer-list {
+    padding: 10px;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  th.action-col,
+  td.action-btn {
+    width: 100px;
+  }
+
+  .customer-view,
+  .customer-del {
+    padding: 5px;
+    margin: 2px 0;
+    width: 100%;
+  }
+
+  /* .create-customer-btn {
+    padding: 8px 16px;
+  } */
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  background-color: #35495e;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
   transition: background-color 0.3s;
 }
 
-.create-customer-btn:hover {
-  background-color: #fff;
-  color: #35495e;
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  margin: 0 10px;
 }
 </style>
