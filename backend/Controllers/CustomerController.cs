@@ -25,7 +25,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("GetAll")]
-        [Authorize] // Only this action requires a valid 
+        [Authorize]
         public IActionResult GetAll()
         {
             var customers = this._DBContext.Customers.ToList();
@@ -33,6 +33,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("GetById/{id}")]
+        [Authorize]
         public IActionResult GetById(int id)
         {
             var customer = this._DBContext.Customers.FirstOrDefault(c => c.CustomerId == id);
@@ -44,6 +45,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("Remove/{id}")]
+        [Authorize]
         public IActionResult Remove(int id)
         {
             var customer = this._DBContext.Customers.FirstOrDefault(c => c.CustomerId == id);
@@ -57,6 +59,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("Create")]
+        [Authorize]
         public IActionResult Create([FromBody] backend.Models.Customers _customer)
         {
             try
@@ -65,7 +68,7 @@ namespace backend.Controllers
                 this._DBContext.SaveChanges();
                 return Ok(true);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 return BadRequest("Email address is already in use.");
             }
@@ -74,22 +77,34 @@ namespace backend.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-        //return StatusCode(500, "An error occurred while processing your request.");
+
         [HttpPut("Update/{id}")]
+        [Authorize]
         public IActionResult Update([FromBody] backend.Models.Customers _customer, int id)
         {
-            var customer = this._DBContext.Customers.FirstOrDefault(c => c.CustomerId == id);
-            if (customer != null)
+            try
             {
-                customer.FirstName = _customer.FirstName;
-                customer.LastName = _customer.LastName;
-                customer.Email = _customer.Email;
-                customer.Phone = _customer.Phone;
-                customer.Address = _customer.Address;
-                this._DBContext.SaveChanges();
-                return Ok(true);
+                var customer = this._DBContext.Customers.FirstOrDefault(c => c.CustomerId == id);
+                if (customer != null)
+                {
+                    customer.FirstName = _customer.FirstName;
+                    customer.LastName = _customer.LastName;
+                    customer.Email = _customer.Email;
+                    customer.Phone = _customer.Phone;
+                    customer.Address = _customer.Address;
+                    this._DBContext.SaveChanges();
+                    return Ok(true);
+                }
+                return Ok(false);
             }
-            return Ok(false);
+            catch (DbUpdateException)
+            {
+                return BadRequest("Email address is already in use.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
     }
 }

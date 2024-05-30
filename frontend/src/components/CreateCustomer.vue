@@ -30,9 +30,8 @@
 </template>
   
   <script>
-import axios from "axios";
+import apiClient from "../../utils/api";
 import { useToast } from "vue-toastify";
-import { getToken } from "../../utils/auth";
 
 export default {
   data() {
@@ -54,11 +53,8 @@ export default {
         address: this.address,
       };
       const toast = useToast();
-      const token = getToken();
-      axios
-        .post("https://localhost:5001/Customer/Create", newCustomer, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+      apiClient
+        .post("/Customer/Create", newCustomer)
         .then(() => {
           toast.success("Customer created successfully!");
           this.$router.push("/");

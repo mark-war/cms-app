@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="generateToken">Generate Token</button>
+    <button @click="generateToken">{{ buttonLabel }}</button>
   </div>
 </template>
     
@@ -9,6 +9,13 @@ import { generateToken } from "../../utils/auth";
 
 export default {
   name: "TokenGenerator",
+  computed: {
+    buttonLabel() {
+      // Check if a token exists in localStorage
+      console.log(localStorage.getItem("token"));
+      return localStorage.getItem("token") ? "Renew Token" : "Generate Token";
+    },
+  },
   methods: {
     generateToken() {
       generateToken();

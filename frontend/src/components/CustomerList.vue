@@ -43,9 +43,9 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiClient from "../../utils/api";
 import { useToast } from "vue-toastify";
-import { checkTokenExpiration, getToken } from "../../utils/auth";
+import { checkTokenExpiration } from "../../utils/auth";
 
 export default {
   data() {
@@ -62,11 +62,8 @@ export default {
   methods: {
     fetchCustomers() {
       const toast = useToast();
-      const token = getToken();
-      axios
-        .get("https://localhost:5001/Customer/GetAll", {
-          headers: { Authorization: "Bearer " + token },
-        })
+      apiClient
+        .get("/Customer/GetAll")
         .then((response) => {
           this.customers = response.data;
         })
@@ -76,16 +73,12 @@ export default {
         });
     },
     viewCustomer(id) {
-      const token = getToken();
-      this.$router.push({ path: `/customer/${id}`, query: { token } });
+      this.$router.push({ path: `/customer/${id}` });
     },
     deleteCustomer(id) {
       const toast = useToast();
-      const token = getToken();
-      axios
-        .delete(`https://localhost:5001/Customer/Remove/${id}`, {
-          headers: { Authorization: "Bearer " + token },
-        })
+      apiClient
+        .delete(`/Customer/Remove/${id}`)
         .then(() => {
           toast.success("Customer deleted successfully!");
           this.fetchCustomers(); // Refresh the list after deletion

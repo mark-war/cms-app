@@ -12,10 +12,10 @@ namespace backend.Models
     {
         public int CustomerId { get; set; }
         [Required]
-        [StringLength(100, MinimumLength = 2)]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "First Name cannot be less than 2 characters.")]
         public string FirstName { get; set; }
         [Required]
-        [StringLength(100, MinimumLength = 2)]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Last Name cannot be less than 2 characters.")]
         public string LastName { get; set; }
         [Required]
         [EmailAddress]

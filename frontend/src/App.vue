@@ -1,19 +1,19 @@
 <template>
   <div id="app">
     <h1 class="cust-header">Customer Management System</h1>
-    <TokenGenerator />
+    <!-- <TokenGenerator /> -->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import TokenGenerator from "./components/TokenGenerator.vue";
+// import TokenGenerator from "./components/TokenGenerator.vue";
 
 export default {
   name: "App",
-  components: {
-    TokenGenerator,
-  },
+  // components: {
+  //   TokenGenerator,
+  // },
 };
 </script>
 

@@ -63,9 +63,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiClient from "../../utils/api";
 import { useToast } from "vue-toastify";
-import { getToken } from '../../utils/auth';
 
 export default {
   props: ["id"],
@@ -82,11 +81,8 @@ export default {
   methods: {
     fetchCustomer() {
       const toast = useToast();
-      const token = getToken();
-      axios
-        .get(`https://localhost:5001/Customer/GetById/${this.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+      apiClient
+        .get(`/Customer/GetById/${this.id}`)
         .then((response) => {
           this.customer = response.data;
           // Clone the customer object for editing
@@ -102,15 +98,8 @@ export default {
     },
     saveChanges() {
       const toast = useToast();
-      const token = getToken();
-      axios
-        .put(
-          `https://localhost:5001/Customer/Update/${this.id}`,
-          this.editedCustomer,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
+      apiClient
+        .put(`/Customer/Update/${this.id}`, this.editedCustomer)
         .then(() => {
           toast.success("Customer updated successfully!");
           this.isEditing = false;
@@ -118,7 +107,41 @@ export default {
         })
         .catch((error) => {
           console.error("Error updating customer:", error);
-          toast.error("Failed to update customer. Please try again.");
+
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.errors
+          ) {
+            const errors = error.response.data.errors;
+            const flattenedErrors = [];
+
+            // Ensure that errors is not undefined or null
+            if (errors) {
+              // Flatten the nested arrays and concatenate error messages
+              Object.keys(errors).forEach((fieldName) => {
+                errors[fieldName].forEach((errorMessage) => {
+                  flattenedErrors.push(errorMessage);
+                });
+              });
+            }
+
+            // Display each error message in a toast
+            flattenedErrors.forEach((errorMessage) => {
+              toast.error(errorMessage);
+            });
+          } else if (error.response && error.response.status === 400) {
+            if (error.response.data === "Email address is already in use.") {
+              // Display a specific error message for unique constraint violation
+              toast.error(
+                "Email address is already in use. Please use a different email."
+              );
+            }
+          } else {
+            // If the error does not have a response or data,
+            // display a generic error message
+            toast.error("Failed to update customer. Please try again.");
+          }
         });
     },
     cancelEdit() {
