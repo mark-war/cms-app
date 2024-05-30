@@ -3,8 +3,8 @@
     <button @click="generateToken">Generate Token</button>
   </div>
 </template>
-  
-<script>
+    
+  <script>
 import { generateToken } from "../../utils/auth";
 
 export default {
@@ -16,8 +16,8 @@ export default {
   },
 };
 </script>
-  
-<style scoped>
+    
+  <style scoped>
 button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -32,4 +32,4 @@ p {
   color: #333;
 }
 </style>
-  
+    
